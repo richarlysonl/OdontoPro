@@ -1,7 +1,9 @@
 export default function dashboard() {
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-            <h1 className="text-4xl font-bold">Dashboard</h1>
-        </main>
+        <div>
+            <h1 className="font-bold">Dashboard</h1>
+            <div className="w-full h-[600px] bg-gray-200 mb-10"></div>
+           <div className="w-full h-[600px] bg-gray-200 mb-10"></div>
+        </div>
     );
-}
+} 

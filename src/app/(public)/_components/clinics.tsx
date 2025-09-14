@@ -9,22 +9,22 @@ export function Clinics() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3x1 text-center mb-12 font-bold ">Clinicas disponiveis</h2>
             <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                    <CardContent>
+                <Card className="overflow-hidden py-0">
+                    <CardContent className="p-0">
                         <div>
                             <div className="relative h-48">
                                 <Image 
                                 src={fotoImg}
                                 alt="Foto da clinica"
                                 fill
-                                className="object-contain"
+                                className="object-cover"
                             />
                             </div>
                             <div className="p-4 space-y-4">
                                 <div className="flex items-center justify-between ">
                                     <div>
-                                    <h3>Clinica messi</h3>
-                                    <p>rua x,centro,Eio grande x</p>
+                                    <h3 className="font-semibold">Clinica messi</h3>
+                                    <p className="text-sm text-gray-500">rua x,centro,Eio grande x</p>
                                     </div>
 
                                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500">
