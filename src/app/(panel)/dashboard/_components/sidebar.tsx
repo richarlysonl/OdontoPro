@@ -1,10 +1,10 @@
 "use client"
-import { useState } from 'react'
+import { useState } from 'react' // Import useState from React
 import { usePathname } from 'next/navigation'
-import clsx from 'clsx';
+import clsx from 'clsx'; // Import clsx para condicional de classes
 import logoImg from "@/../public/logo-odonto.png";
 import Image from "next/image";
-import {
+import {  // Import componentes do shadcn/ui sheet para menu mobile
     Sheet,
     SheetContent,
     SheetDescription,
@@ -13,7 +13,13 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import { Button } from '@/components/ui/button';
-import { Banknote, CalendarCheck, CalendarCheck2, ChevronLeft, Folder, List, Settings } from 'lucide-react';
+import {  // Import componentes do shadcn/ui collapsible para menu desktop
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+
+import { Banknote, CalendarCheck, CalendarCheck2, ChevronLeft, ChevronRight, Folder, List, Settings } from 'lucide-react';
 import Link from 'next/link';
 export function Sidebar({ children }:
     { children: React.ReactNode }) {
@@ -23,25 +29,99 @@ export function Sidebar({ children }:
         <div className='flex min-h-screen w-full'>
             <aside className={clsx("flex flex-col border-r bg-background transition-all duration-300 p-4 h-full", {
                 "w-20": isCollapsed,
-                "w-64": !isCollapsed
-            },
-                "hidden md:flex md:fixed"
+                "w-64": !isCollapsed,
+                "hidden md:flex md:fixed": true
+            }
             )
             }>
+
                 <div className='mb-6 mt-4'>
-                    <Image
-                        src={logoImg}
-                        alt="logo"
-                        priority
-                        quality={100}
-                        style={{height: 'auto',
-                            width: 'auto'
-                        }}
-                    />
+                    {!isCollapsed && (
+                        <Image
+                            src={logoImg}
+                            alt="logo"
+                            priority
+                            quality={100}
+                        />)}
                 </div>
-                <Button>
-                    <ChevronLeft className='w-6 h-6'></ChevronLeft>
+                <Button
+                    className='bg-gray-100 hover:bg-gray-200 text-zinc-900 self-end mb-2'
+                    onClick={() => setIsCollapsed(!isCollapsed)} >
+                    {!isCollapsed ? <ChevronLeft className='w-6 h-6' /> : <ChevronRight className='w-6 h-6' />}
                 </Button>
+
+
+                {/*mostrar apenas quando não estiver colapsado*/}
+                {isCollapsed && (
+                    <nav className='flex flex-col gap-1 overflow-hidden mt-2'>
+                        <SidebarLink
+                                href='/dashboard'
+                                label='agendamentos'
+                                pathname={pathname}
+                                isCollapsed={isCollapsed}
+                                icon={<CalendarCheck2 className='w-6 h-6' />}
+                            />
+                            <SidebarLink
+                                href='/dashboard/services'
+                                label='serviços'
+                                pathname={pathname}
+                                isCollapsed={isCollapsed}
+                                icon={<Folder className='w-6 h-6' />}
+                            />
+                            <SidebarLink
+                                href='/dashboard/profile'
+                                label='perfil'
+                                pathname={pathname}
+                                isCollapsed={isCollapsed}
+                                icon={<Settings className='w-6 h-6' />}
+                            />
+                            <SidebarLink
+                                href='/dashboard/plans'
+                                label='planos'
+                                pathname={pathname}
+                                isCollapsed={isCollapsed}
+                                icon={<Banknote className='w-6 h-6' />}
+                            />
+                    </nav>
+                )}
+
+
+                <Collapsible open={!isCollapsed}>
+                    <CollapsibleContent>
+                        <nav className='flex flex-col gap-1 overflow-hidden'>
+                            <span className='text-sm text-gray-400 font-medium mt-1 uppercase'>painel</span>
+                            <SidebarLink
+                                href='/dashboard'
+                                label='agendamentos'
+                                pathname={pathname}
+                                isCollapsed={isCollapsed}
+                                icon={<CalendarCheck2 className='w-6 h-6' />}
+                            />
+                            <SidebarLink
+                                href='/dashboard/services'
+                                label='serviços'
+                                pathname={pathname}
+                                isCollapsed={isCollapsed}
+                                icon={<Folder className='w-6 h-6' />}
+                            />
+                            <span className='text-sm text-gray-400 font-medium mt-1 uppercase'>minha conta</span>
+                            <SidebarLink
+                                href='/dashboard/profile'
+                                label='perfil'
+                                pathname={pathname}
+                                isCollapsed={isCollapsed}
+                                icon={<Settings className='w-6 h-6' />}
+                            />
+                            <SidebarLink
+                                href='/dashboard/plans'
+                                label='planos'
+                                pathname={pathname}
+                                isCollapsed={isCollapsed}
+                                icon={<Banknote className='w-6 h-6' />}
+                            />
+                        </nav>
+                    </CollapsibleContent>
+                </Collapsible>
 
             </aside>
 

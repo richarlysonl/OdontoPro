@@ -1,7 +1,7 @@
 export default function Services(){
     return(
-        <p>
+        <div>
         <h1>services</h1>
-        </p>
+        </div>
     )
 }
