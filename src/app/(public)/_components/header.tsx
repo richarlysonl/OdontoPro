@@ -11,9 +11,14 @@ import {
 } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { Ghost, LogIn, Menu } from "lucide-react";
+import {useSession} from "next-auth/react";
+import { HandleRegister } from "../_actions/login";
+   async function Handlelogin() {
+    await HandleRegister("github")
+   }
 export function Header() {
+  const { data: session,status} = useSession();
     const [isOpen, setIsOpen] = useState(false);
-    const session = null;
     const navItems = [
         {href: "#profissionais", label: "profissionais"},
         { href: "#contato", label: "contato" },
@@ -25,24 +30,24 @@ export function Header() {
         onClick={ () => setIsOpen(false)}
             key={item.href}
             asChild
-            className="text-sm font-medium  mr-1 text-gray-700 hover:text-gray-900">
+            className="text-sm font-medium  mr-1 text-white rounded-md hover:text-gray-900">
         <Link href={item.href}>
         {item.label}
         </Link>
             </Button>
     ))}
-        {session ? (
-          <link href="/dashboard"
-          className="flex text-sm font-medium text-gray-700 hover:text-gray-900">
+        {status === 'loading' ? (<> </> ): session ? (
+          <Button>
+          <Link href="/dashboard"
+          className="flex text-sm font-medium text-white rounded-md hover:text-gray-900">
 
             painel da clinica
-          </link>
-        ) : (
-          <Button>
-          <Link href="/login">
-            <LogIn />
-            login
           </Link>
+          </Button>
+        ) : (
+          <Button onClick={Handlelogin}>
+            <LogIn/>
+            login
           </Button>
         )}
         </>
