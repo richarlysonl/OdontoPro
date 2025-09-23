@@ -1,10 +1,15 @@
 import React from "react";
 import { Sidebar } from "../../(panel)/dashboard/_components/sidebar";
-
-export default function DasboardLayout({
+import  getSession  from "@/lib/getSession";
+import { redirect} from "next/navigation";
+export default async function DasboardLayout({
     children,
-}:
-{children:React.ReactNode}){
+}:{children:React.ReactNode})
+{
+    const session = await getSession();
+            //console.log(session?.user?.name);
+            if(!session)
+                redirect("/");
     return(
         <>
         <Sidebar>

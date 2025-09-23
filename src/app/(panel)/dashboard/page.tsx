@@ -1,10 +1,10 @@
-import  getSession  from "@/lib/getSession";
-import { redirect} from "next/navigation";
+//import  getSession  from "@/lib/getSession";
+//import { redirect} from "next/navigation";
 export default async function dashboard() {
-    const session = await getSession();
-    //console.log(session?.user?.name);
-    if(!session)
-        redirect("/");
+    //const session = await getSession();
+        //console.log(session?.user?.name);
+        //if(!session)
+            //redirect("/");
     return (
         <div>
             <h1 className="font-bold">Dashboard</h1>
