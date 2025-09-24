@@ -1,4 +1,5 @@
 "use client"
+import {useState} from "react"
 import { useProfileForm } from "./profile_form"
 import {
     Card,
@@ -37,10 +38,27 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { cn } from "@/lib/utils"
 
 export function ProfileContent() {
+    const [selectedHours, setSelectedHours] = useState<string[]>([]);
+    const [dialogIsopen, setDialogIsOpen] = useState(false);
     const form = useProfileForm()
-
+    function generateTimeSlots(): string[] {
+        const hours: string[] = [];
+        for (let i = 8; i < 24; i++) {
+            for(let j = 0; j < 2; j++) {
+            const hour = i.toString().padStart(2, '0')/* 2 digitos no maximo se não for 2 digitoss poe 0*/;
+            const min = (j*30).toString().padStart(2, '0');
+            hours.push(`${hour}:${min}`);
+            }
+        }
+        return hours;
+    }
+    const hours = generateTimeSlots();
+    function touggleHour(hour: string) {
+        setSelectedHours((prev) => prev.includes(hour) ? prev.filter(h => h !== hour) : [...prev, hour].sort())
+    }
     return (
         <div className="mx-auto">
             <Form {...form} >
@@ -133,7 +151,7 @@ export function ProfileContent() {
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="font-semibold">Fuso horário da clinica</Label>
-                                    <Dialog>
+                                    <Dialog open={dialogIsopen} onOpenChange={setDialogIsOpen}>
                                         <DialogTrigger asChild>
                                             <Button variant='outline' className="w-full justify-between">clique aqui para selecionar horarios
                                                 <span><ArrowRight className="w-5 h-5"/></span>
@@ -147,13 +165,25 @@ export function ProfileContent() {
                                                 </DialogDescription>
                                             </DialogHeader>
                                             <section className="py-4">
-                                                <p>
+                                                <p className="text-sm text-muted-foreground mb-2">
                                                     clique nos horarios a baixo para marcar ou desmarcar
                                                 </p>
-                                                <div>
-                                                    
+                                                <div className="grid grid-cols-5 gap-2 ">
+                                                    {hours.map((hour) => (
+                                                        <Button
+                                                            key={hour}
+                                                            variant="outline" 
+                                                            className={cn('h-10', selectedHours.includes(hour) && 'border-2 border-emerald-500 text-primary'
+                                                            )}
+                                                            onClick={() => touggleHour(hour)}
+                                                            >
+                                                                {hour}
+                                                            
+                                                        </Button>
+                                                    ))}
                                                 </div>
                                             </section>
+                                            <Button className="w-full mt-4" onClick={() => setDialogIsOpen(false)}>fechar</Button>
                                         </DialogContent>
                                     </Dialog>
 
