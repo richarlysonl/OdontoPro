@@ -1,6 +1,6 @@
 "use client"
 import {useState} from "react"
-import { useProfileForm } from "./profile_form"
+import { ProfileFormData, useProfileForm } from "./profile_form"
 import {
     Card,
     CardContent,
@@ -39,11 +39,26 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-
-export function ProfileContent() {
-    const [selectedHours, setSelectedHours] = useState<string[]>([]);
+import { Prisma } from "@/generated/prisma/client"
+import { updateProfile } from "../_actions/update_profile"
+import { toast } from 'sonner'
+import { formatPhone } from '@/utils/formatPhone'
+type UserWithSubscriptions = Prisma.UserGetPayload<{
+    include: {subscription: true}
+}>;
+interface profileContentProps {
+    user: UserWithSubscriptions;
+}
+export function ProfileContent({user}:profileContentProps ) {
+    const [selectedHours, setSelectedHours] = useState<string[]>(user.times ?? []);
     const [dialogIsopen, setDialogIsOpen] = useState(false);
-    const form = useProfileForm()
+    const form = useProfileForm({
+        name: user?.name || null,
+        address: user?.address || null,
+        phone: user?.phone || null,
+        status: user?.status || false,
+        timezone: user?.timezone || null,
+    })
     function generateTimeSlots(): string[] {
         const hours: string[] = [];
         for (let i = 8; i < 24; i++) {
@@ -59,10 +74,34 @@ export function ProfileContent() {
     function touggleHour(hour: string) {
         setSelectedHours((prev) => prev.includes(hour) ? prev.filter(h => h !== hour) : [...prev, hour].sort())
     }
+
+    const timeZones = Intl.supportedValuesOf('timeZone').filter((zone) => 
+    zone.startsWith("America/Sao_Paulo") || 
+    zone.startsWith("America/Fortaleza") || 
+    zone.startsWith("America/Recife") ||
+    zone.startsWith("America/Cuiaba") ||
+    zone.startsWith("America/Bahia")
+    );
+    async function onSubmit(values: ProfileFormData){
+        const response = await updateProfile({
+            name: values.name,
+            address: values.address,
+            phone: values.phone,
+            status: values.status === "active" ? true : false,
+            timezone: values.timezone,
+            times: selectedHours || [], 
+        })
+        if(response.error){
+            toast.error(response.error, {closeButton: true})
+            return;
+        }
+        //exibe a mensagem de sucesso
+        toast.success(response.data)
+    }
     return (
         <div className="mx-auto">
             <Form {...form} >
-                <form>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <Card className="flex flex-col gap-6">
                         <CardHeader>
                             <CardTitle>Perfil</CardTitle>
@@ -71,7 +110,7 @@ export function ProfileContent() {
                             <div className="flex justify-center items-center">
                                 <div className="relative h-40 w-40 rounded-full overflow-hidden">
                                     <Image
-                                        src={imgTest}
+                                        src={user.image ? user.image : imgTest}
                                         alt="Foto de perfil"
                                         fill
                                         className="object-cover"
@@ -119,7 +158,14 @@ export function ProfileContent() {
                                         <FormItem>
                                             <FormLabel className="font-semibold">telefone</FormLabel>
                                             <FormControl>
-                                                <Input {...field} placeholder="digite o numero da clinica" />
+                                                <Input 
+                                                {...field} 
+                                                placeholder="(64) 99999-9999)" 
+                                                onChange={(e) => {
+                                                    const formattedValue = formatPhone(e.target.value);
+                                                    field.onChange(formattedValue);
+                                                }}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -128,7 +174,7 @@ export function ProfileContent() {
                                 <div className="space-y-4">
                                     <FormField
                                         control={form.control}
-                                        name="stats"
+                                        name="status"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="font-semibold">status da clinica</FormLabel>
@@ -188,7 +234,36 @@ export function ProfileContent() {
                                     </Dialog>
 
                                 </div>
-                            </div>
+                            
+                            <FormField
+                                        control={form.control}
+                                        name="timezone"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="font-semibold">selecione o seu fuso horario
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Select
+                                                        onValueChange={field.onChange}
+                                                        defaultValue={field.value}>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Selecione o fuso-horario" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {timeZones.map((zone) => (
+                                                                <SelectItem key={zone} value={zone}>
+                                                                    {zone}
+                                                                </SelectItem>)
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button type="submit" 
+                                    className="w-full mt-4 bg-emerald-500 hover:bg-emerald-500">salvar alterações</Button>
+                                </div>
                         </CardContent>
                     </Card>
                 </form>

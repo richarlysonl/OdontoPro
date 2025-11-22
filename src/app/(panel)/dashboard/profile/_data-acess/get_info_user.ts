@@ -12,7 +12,7 @@ export async function getUserData({userId}: getUserDataProps) {
             id: userId
         },
         include: {
-            subscriptionId: true,
+            subscription: true,
         }
     });
 
