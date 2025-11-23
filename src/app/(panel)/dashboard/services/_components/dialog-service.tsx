@@ -1,7 +1,9 @@
 "use client"
+// - valor em centavos = valor em reais * 100
+// valor em reais = valor em centavos / 100
 import { DialogHeader } from "@/components/ui/dialog";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
-import { UseDialogServiceForm } from "./dialog-service-form";
+import { DialogContentProps, DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogServiceFormData, UseDialogServiceForm } from "./dialog-service-form";
 import {
     Form,
     FormField, 
@@ -12,10 +14,30 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ConvertRealToCents } from "@/utils/convertCurrency";
 export function DialogService() {
 
     const form = UseDialogServiceForm();
 
+    async function onSubmit(values: DialogServiceFormData) {
+        const priceInCents = ConvertRealToCents(values.price);
+        console.log(priceInCents)
+    }
+
+    function changeCurrency(event: React.ChangeEvent<HTMLInputElement>) {
+    let { value } = event.target;
+    value = value.replace(/\D/g, "");
+    if(value){
+        value = (parseInt(value,10) / 100).toFixed(2);
+        value = value.replace(".", ","); //separando 1234.56 em 1.234,00
+        value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        // encontrar o grupo de 3 digitos que estejam seguidos por outro grupo de 3 digitos. garantindo
+        // que os pontos sejam inseridos entre os milhares
+        //ex: 1234567 vira 1.234.567,89
+    }
+    event.target.value = value;
+    form.setValue("price", value);
+    }
     return (
         <>
             <DialogHeader>
@@ -26,7 +48,9 @@ export function DialogService() {
             </DialogHeader>
 
             <Form {...form}>
-                <form className="space-y-2">
+                <form className="space-y-2"
+                onSubmit={form.handleSubmit(onSubmit)}
+                >
                     <div className="flex flex-col">
                         <FormField
                             control={form.control}
@@ -50,7 +74,9 @@ export function DialogService() {
                                 <FormItem className="my-2">
                                     <FormLabel className="font-semibold">valor do Serviço</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="ex: 120,00" {...field}/>
+                                        <Input placeholder="ex: 120,00" {...field}
+                                        onChange={changeCurrency}
+                                        />
                                     </FormControl>
                                     <FormMessage/>
                                     
