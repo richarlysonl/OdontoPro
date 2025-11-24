@@ -36,7 +36,9 @@ export function ServiceList() {
                             </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-lg">
-                        <DialogService/>
+                        <DialogService
+                        closeModal={() => {setIsDialogOpen(false)}}
+                        />
                     </DialogContent>
                 </CardHeader>
             </Card>
