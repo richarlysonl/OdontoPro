@@ -1,5 +1,5 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
+criado e desenvolvido com base nas video aula de Matheus Fraga no curso Desenvolver um SaaS do zero ao profissional com Next JS, TypeScript, Banco de dados, Stripe pagamentos
 ## Getting Started
 
 First, run the development server:
