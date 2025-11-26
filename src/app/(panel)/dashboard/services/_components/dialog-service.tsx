@@ -26,7 +26,7 @@ interface DialogServiceProps extends DialogContentProps{
 export function DialogService({ closeModal }: DialogServiceProps) {
     const [loading,setLoading] = useState(false);
     const form = UseDialogServiceForm();
-    const router = useRouter();
+    //const router = useRouter();
 
     async function onSubmit(values: DialogServiceFormData) {
         setLoading(true);
