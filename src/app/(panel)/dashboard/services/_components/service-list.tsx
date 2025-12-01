@@ -31,7 +31,10 @@ interface ServiceListProps{
 }
 
 export function ServiceList({services}:ServiceListProps) {
+
     const [dialogIsOpen, setIsDialogOpen] = useState(false);
+    const [editingService, setEditingService] = useState<Service | null>(null);
+
    async function  handleDeleteService(serviceId: string) {
     const response = await deleteService({serviceID: serviceId});
     if(response.error){
@@ -40,6 +43,12 @@ export function ServiceList({services}:ServiceListProps) {
     }
     toast.success(response.data?.message || "Serviço deletado com sucesso");
     }
+
+    async function handleEditService(service: Service) {
+        setEditingService(service);
+        setIsDialogOpen(true);
+    }
+
     return (
         <Dialog open={dialogIsOpen} onOpenChange={setIsDialogOpen}>
         <section className="mx-auto">
@@ -51,9 +60,27 @@ export function ServiceList({services}:ServiceListProps) {
                             <Plus className="w-4 h-4"/>
                             </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-lg">
+                    <DialogContent className="sm:max-w-lg"
+                    onInteractOutside={(e) => {
+                        e.preventDefault()
+                        setIsDialogOpen(false);
+                        setEditingService(null);
+                    }
+                    }
+                    >
                         <DialogService
-                        closeModal={() => {setIsDialogOpen(false)}}
+                        closeModal={() => 
+                            {setIsDialogOpen(false),
+                            setEditingService(null);
+                            }
+                        }
+                        serviceId={editingService ? editingService.id : undefined}
+                        initialValues={editingService ? {
+                            name: editingService.name,
+                            price: (editingService.price / 100).toFixed(2).replace('.', ','),
+                            hours: Math.floor(editingService.duration / 60).toString(),
+                            minutes: (editingService.duration % 60).toString().toString()
+                        } : undefined}
                         />
                     </DialogContent>
                 </CardHeader>
@@ -64,17 +91,14 @@ export function ServiceList({services}:ServiceListProps) {
                                 <div className="flex items-center space-x-2">
                                     <span className="font-medium">{service.name}</span>
                                     <span className="text-gray-500">-</span>
-                                    <span className="font-medium">{service.price}</span>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <span className="font-medium">{service.name}</span>
                                     <span className="font-medium text-gray-500">{formatCurrency((service.price/100))}</span>
                                 </div>
-
                                 <div>
-                                    <Button variant='ghost' size='icon' onClick={()=>handleDeleteService(service.id)}>
+                                    <Button variant='ghost' size='icon' onClick={()=>handleEditService(service)}>
                                         <Pencil
                                         className="w-4 h-4"/>
+                                    </Button>
+                                    <Button variant='ghost' size='icon' onClick={()=>handleDeleteService(service.id)}>
                                         <X className="w-4 h-4"/>
                                     </Button>
                                 </div>

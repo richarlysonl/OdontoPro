@@ -18,14 +18,22 @@ import { Button } from "@/components/ui/button";
 import { ConvertRealToCents } from "@/utils/convertCurrency";
 import { createNewService } from "../_actions/create-service";
 import { toast } from "sonner";
+import { updateService } from "../_actions/update-service";
 //import { useRouter } from "next/navigation";
 interface DialogServiceProps extends DialogContentProps{
     closeModal: () => void;
+    serviceId?: string;
+    initialValues?: {
+        name: string,
+        price: string,
+        hours: string,  
+        minutes: string;
+    };
 }
 
-export function DialogService({ closeModal }: DialogServiceProps) {
+export function DialogService({ closeModal, initialValues, serviceId }: DialogServiceProps) {
     const [loading,setLoading] = useState(false);
-    const form = UseDialogServiceForm();
+    const form = UseDialogServiceForm({initialValues: initialValues});
     //const router = useRouter();
 
     async function onSubmit(values: DialogServiceFormData) {
@@ -35,6 +43,18 @@ export function DialogService({ closeModal }: DialogServiceProps) {
         const minutes = parseInt(values.minutes || "0");
         //salvar em minutos
         const duration = (hours * 60) + minutes;
+
+        if(serviceId){
+            await EditServiceById({
+                serviceId: serviceId,
+                name: values.name,
+                price: priceInCents,
+                duration: duration
+            });
+            setLoading(false);
+            toast.success("Serviço atualizado com sucesso!");
+            return;
+        }
         const response = await createNewService({
             name: values.name,
             price: priceInCents,
@@ -49,6 +69,23 @@ export function DialogService({ closeModal }: DialogServiceProps) {
         //router.refresh();
         handleCloseModal();
         console.log(response);
+    }
+
+    async function EditServiceById({serviceId,name,price,duration}: {serviceId: string; name: string; price: number; duration: number}) {
+        const response = await updateService(serviceId,{
+            serviceId: serviceId,
+            name: name,
+            price: price,
+            duration: duration 
+        });
+        setLoading(false);
+        if(response.error){
+            toast.error(response.error);
+            return;
+        }
+        toast.success("Serviço atualizado com sucesso!");
+        handleCloseModal();
+
     }
 
     function handleCloseModal() {
@@ -157,7 +194,7 @@ export function DialogService({ closeModal }: DialogServiceProps) {
                         </div>
                     </div>
                     <Button type="submit" className="w-full font-semibold mt-4" disabled={loading}>
-                        {loading ? "Adicionando..." : "Adicionar Serviço"}
+                        {loading ? "Adicionando..." : `${serviceId? "Atualizar Seviço" : "Adicionar Serviço"}`}
                         
                         </Button>
                 </form>
