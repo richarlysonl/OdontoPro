@@ -43,6 +43,8 @@ import { Prisma } from "@/generated/prisma/client"
 import { updateProfile } from "../_actions/update_profile"
 import { toast } from 'sonner'
 import { formatPhone } from '@/utils/formatPhone'
+import { signOut, useSession } from "next-auth/react"
+import { redirect, useRouter } from "next/navigation"
 type UserWithSubscriptions = Prisma.UserGetPayload<{
     include: {subscription: true}
 }>;
@@ -52,6 +54,8 @@ interface profileContentProps {
 export function ProfileContent({user}:profileContentProps ) {
     const [selectedHours, setSelectedHours] = useState<string[]>(user.times ?? []);
     const [dialogIsopen, setDialogIsOpen] = useState(false);
+    const{update} = useSession();
+    const router = useRouter();
     const form = useProfileForm({
         name: user?.name || null,
         address: user?.address || null,
@@ -97,6 +101,11 @@ export function ProfileContent({user}:profileContentProps ) {
         }
         //exibe a mensagem de sucesso
         toast.success(response.data)
+    }
+    async function handleLogout{
+        await signOut();
+        await update();
+        router.replace("/");
     }
     return (
         <div className="mx-auto">
@@ -268,6 +277,15 @@ export function ProfileContent({user}:profileContentProps ) {
                     </Card>
                 </form>
             </Form>
+            <section>
+                <Button 
+                variant="destructive" 
+                className="w-full mt-4 bg-red-500 hover:bg-red-600"
+                onClick={handleLogout}
+                >
+                    Sair da conta
+                </Button>
+            </section>
         </div>
     )
 }
