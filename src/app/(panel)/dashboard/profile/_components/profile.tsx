@@ -102,9 +102,9 @@ export function ProfileContent({user}:profileContentProps ) {
         //exibe a mensagem de sucesso
         toast.success(response.data)
     }
-    async function handleLogout{
+    async function handleLogout(){
         await signOut();
-        await update();
+        await update(); 
         router.replace("/");
     }
     return (
