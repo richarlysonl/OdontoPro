@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { formatPhone } from "@/utils/formatPhone";
 import { DateTimePicker } from "./date_picker";
 import { date } from "zod";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { match } from "node:assert";
 type UserWithServiceAndSubscription = Prisma.UserGetPayload<{
   include: { service: true; subscriptions: true };
 }>;
@@ -121,6 +123,30 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
                                                     }
                                                 }}
                                             />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                        )}/>
+                        <FormField
+                        control={form.control}
+                        name="serviceId"
+                        render={({field}) => (
+                                <FormItem className="flex items-center gap-2 space-y-1">
+                                    <FormLabel className="font-semibold">Serviço:</FormLabel>
+                                    <FormControl>
+                                            <Select onValueChange={field.onChange} defaultValue="">
+                                                <SelectTrigger className="w-full border rounded p-2">
+                                                    <SelectValue placeholder="Selecione um serviço"/>
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {clinic.services.map((service) => (
+                                                        <SelectItem key={service.id} value={service.id}>
+                                                            {service.name} - R$ {service.price.toFixed(2)}
+
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
