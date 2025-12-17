@@ -13,6 +13,7 @@ import { DateTimePicker } from "./date_picker";
 import { date } from "zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { match } from "node:assert";
+import { HandleRegister } from "@/app/(public)/_actions/login";
 type UserWithServiceAndSubscription = Prisma.UserGetPayload<{
   include: { service: true; subscriptions: true };
 }>;
@@ -22,7 +23,13 @@ interface ScheduleContentProps {
     }
 export function ScheduleContent({clinic}: ScheduleContentProps) {
     const form = useApointmentForm();
-    return (
+    const {watch} = form;
+
+    async function HandleRegisterApointment(formData: appointmentFormData) {
+        console.log(formData);    
+    }
+
+        return (
         <div className="min-h-screen flex flex-col">
             <div className="h-32 bg-emerald-500" />
             <section className="container mx-auto px-4">
@@ -53,6 +60,7 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
                 {/* Formulario de agendamento */}
                 <Form {...form}>
                     <form 
+                    onSubmit={form.handleSubmit(HandleRegisterApointment)}
                     className="mx-2 space-y-6 bg-white  p-6 border rounded-md shadow-sm"
                     >
                         <FormField
@@ -151,6 +159,21 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
                                     <FormMessage/>
                                 </FormItem>
                         )}/>
+                        {clinic.status ? (
+                            <Button
+                        type="submit"
+                        className="w-full bg-emerald-500 hover:bg-emerald-400"
+                        disabled={!watch("name") || !watch("email") || !watch("phone") || !watch("date")}
+                        >
+                            Agendar
+                        </Button>
+                        ): (
+                            <p
+                            className="bg-red-500 text-white rounded-mb text-center px-4 py-2"
+                            >
+                                clinica fechada neste momento</p>
+                        )
+                        }
                     </form>
                 </Form>
             </section>
