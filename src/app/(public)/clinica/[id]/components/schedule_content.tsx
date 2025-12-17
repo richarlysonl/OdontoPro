@@ -1,5 +1,6 @@
 "use client"
 import Image from "next/image";
+import { useState, useCallback, useEffect } from "react";
 import imgTest from "../../../../../../public/foto1.png"
 import { MapPin } from "lucide-react";
 import { Prisma } from '@prisma/client';
@@ -10,10 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { formatPhone } from "@/utils/formatPhone";
 import { DateTimePicker } from "./date_picker";
-import { date } from "zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { match } from "node:assert";
-import { HandleRegister } from "@/app/(public)/_actions/login";
+// @ts-ignore
 type UserWithServiceAndSubscription = Prisma.UserGetPayload<{
   include: { service: true; subscriptions: true };
 }>;
@@ -21,10 +20,43 @@ type UserWithServiceAndSubscription = Prisma.UserGetPayload<{
 interface ScheduleContentProps {
     clinic: UserWithServiceAndSubscription
     }
+interface timeSlot {
+    time: string;
+    available: boolean;
+}
 export function ScheduleContent({clinic}: ScheduleContentProps) {
     const form = useApointmentForm();
     const {watch} = form;
+    const selectedDate = watch("date");
+    const selectedServiceId = watch("serviceId");
+    const [selectedTime,setSelectedTime] = useState("");
+    const [availableTimes,setAvailableTimes] = useState<timeSlot[]>([]);
+    const [loadingSlots,setLoadingSlots] = useState(false);
 
+    //quais os horarios bloqueados
+    const [blockedTimes,setBlockedTimes] = useState<string[]>([]);
+    const fetchBlockedTimes = useCallback(async (date:Date): Promise<string[]> => {
+        setLoadingSlots(true);
+        try{
+            const dateString = date.toISOString().split('T')[0];
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/schedule/get-appointments?userId=${clinic.id}&date=${dateString}`);
+            return [];
+        }catch(err){
+            console.log(err);
+            setLoadingSlots(false);
+            return [];
+        }
+    },[clinic.id] );
+    useEffect(() => {
+        if(selectedDate){
+            //buscar horarios bloqueados
+            fetchBlockedTimes(selectedDate).then((blocked) =>{
+                
+            })
+        }
+    }, 
+    [selectedDate,clinic.times, fetchBlockedTimes, selectedTime]);
+    //funcao para buscar horarios bloqueados (via fetch HTTP)
     async function HandleRegisterApointment(formData: appointmentFormData) {
         console.log(formData);    
     }
@@ -147,6 +179,8 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
                                                     <SelectValue placeholder="Selecione um serviço"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
+
+                                                    {/* @ts-ignore*/}
                                                     {clinic.services.map((service) => (
                                                         <SelectItem key={service.id} value={service.id}>
                                                             {service.name} - R$ {service.price.toFixed(2)}
@@ -169,7 +203,7 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
                         </Button>
                         ): (
                             <p
-                            className="bg-red-500 text-white rounded-mb text-center px-4 py-2"
+                            className="bg-red-500 text-white rounded-md text-center px-4 py-2"
                             >
                                 clinica fechada neste momento</p>
                         )
