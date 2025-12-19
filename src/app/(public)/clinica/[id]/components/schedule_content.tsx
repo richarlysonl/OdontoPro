@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { formatPhone } from "@/utils/formatPhone";
 import { DateTimePicker } from "./date_picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { time } from "console";
 // @ts-ignore
 type UserWithServiceAndSubscription = Prisma.UserGetPayload<{
   include: { service: true; subscriptions: true };
@@ -40,7 +41,9 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
         try{
             const dateString = date.toISOString().split('T')[0];
             const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/schedule/get-appointments?userId=${clinic.id}&date=${dateString}`);
-            return [];
+            const data = await response.json();
+            setLoadingSlots(false);
+            return data; //retornar o array de horarios bloqueados do dia
         }catch(err){
             console.log(err);
             setLoadingSlots(false);
@@ -51,7 +54,14 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
         if(selectedDate){
             //buscar horarios bloqueados
             fetchBlockedTimes(selectedDate).then((blocked) =>{
-                
+                setBlockedTimes(blocked);
+                const times = clinic.times || [];
+                const finalSlots = times.map((time:string) => ({
+                    time: time,
+                    available: !blocked.includes(time)
+                }))
+                setAvailableTimes(finalSlots);
+
             })
         }
     }, 
