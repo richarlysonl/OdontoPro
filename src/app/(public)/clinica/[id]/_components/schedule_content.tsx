@@ -14,6 +14,8 @@ import { DateTimePicker } from "./date_picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { time } from "console";
 import { ScheduleTimeList } from "./schedule_time_list";
+import { createNewAppointment } from "../_actions/create_appointment";
+import { toast } from "sonner";
 // @ts-ignore
 type UserWithServiceAndSubscription = Prisma.UserGetPayload<{
   include: { service: true; subscriptions: true };
@@ -69,9 +71,28 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
     [selectedDate,clinic.times, fetchBlockedTimes, selectedTime]);
     //funcao para buscar horarios bloqueados (via fetch HTTP)
     async function HandleRegisterApointment(formData: appointmentFormData) {
-        console.log(formData);    
+        if(!selectedTime){
+            alert("por favor selecione um horario para o agendamento");
+            return;
+        }
+        const response = await createNewAppointment({
+            name: formData.name,
+            email: formData.email,
+            Phone: formData.phone,
+            date: formData.date,
+            ServiceId: formData.serviceId,
+            clinicId: clinic.id,
+            time: selectedTime,
+        });
+        if(response.error){
+            toast.error(response.error);
+            console.log(response.error);
+            return;
+        }
+        toast.success("Agendamento criado com sucesso!");
+        form.reset();
+        setSelectedTime("");
     }
-
         return (
         <div className="min-h-screen flex flex-col">
             <div className="h-32 bg-emerald-500" />

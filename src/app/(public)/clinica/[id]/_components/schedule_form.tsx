@@ -5,7 +5,7 @@ import { z } from "zod";
 export const appointmentSchema = z.object({
     name: z.string().min(1, { message: "Nome é obrigatório" }),
     address: z.string().optional(),
-    phone: z.string().optional(),
+    phone: z.string().min(1, { message: "Telefone é obrigatório" }),
     status: z.string(),
     email: z.string().email({ message: "Email inválido" }),
     serviceId: z.string().min(1, { message: "Serviço é obrigatório" }),

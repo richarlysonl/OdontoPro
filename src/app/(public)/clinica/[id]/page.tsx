@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { GetInfoSchudule } from "./data_acess/get_info_schudule";
-import { ScheduleContent } from "./components/schedule_content";
+import { GetInfoSchudule } from "./_data_acess/get_info_schudule";
+import { ScheduleContent } from "./_components/schedule_content";
 export default async function SchedulePage({
     params,
 }:{
