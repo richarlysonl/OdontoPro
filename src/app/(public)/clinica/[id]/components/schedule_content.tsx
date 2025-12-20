@@ -13,6 +13,7 @@ import { formatPhone } from "@/utils/formatPhone";
 import { DateTimePicker } from "./date_picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { time } from "console";
+import { ScheduleTimeList } from "./schedule_time_list";
 // @ts-ignore
 type UserWithServiceAndSubscription = Prisma.UserGetPayload<{
   include: { service: true; subscriptions: true };
@@ -21,7 +22,7 @@ type UserWithServiceAndSubscription = Prisma.UserGetPayload<{
 interface ScheduleContentProps {
     clinic: UserWithServiceAndSubscription
     }
-interface timeSlot {
+export interface timeSlot {
     time: string;
     available: boolean;
 }
@@ -203,6 +204,34 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
                                     <FormMessage/>
                                 </FormItem>
                         )}/>
+
+                        {selectedServiceId && (
+                            <div>
+                                <Label className=" font-semibold space-y-2">Selecione um horário:</Label>
+                                <div className="bg-gray-100 p-4 rounded-lg">
+                                    {loadingSlots ? (
+                                        <p>Carregando horários disponíveis...</p>
+                                    ) : availableTimes.length === 0 ? (
+                                        <p>Nenhum horário disponível para a data selecionada.</p>
+                                    ) : (
+                                        <ScheduleTimeList 
+                                            onSelectTime={(time) => setSelectedTime(time)}
+                                            clinicTimes={clinic.times}
+                                            blockedTimes={blockedTimes}
+                                            availableTimesSlots={availableTimes}
+                                            selectedTime={selectedTime}
+                                            selectedDate={selectedDate}
+                                            requiredSlots={
+                                                clinic.services.find(service=> service.id ===  selectedServiceId) ? Math.ceil(
+                                                    clinic.services.find(service=> service.id ===  selectedServiceId)!.duration / 30
+                                                ) : 1
+                                                }/>
+                                             )
+                                            }
+                                </div>
+                            </div>
+                        )}
+
                         {clinic.status ? (
                             <Button
                         type="submit"
