@@ -223,7 +223,7 @@ export function ScheduleContent({clinic}: ScheduleContentProps) {
                                                     {/* @ts-ignore*/}
                                                     {clinic.services.map((service) => (
                                                         <SelectItem key={service.id} value={service.id}>
-                                                            {service.name} - R$ {service.price.toFixed(2)}
+                                                            {service.name}- {Math.round(service.duration/60)}:{service.duration%60}h - R$ {service.price.toFixed(2)}
 
                                                         </SelectItem>
                                                     ))}

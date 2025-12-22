@@ -22,3 +22,20 @@ export function isSlotInThePast(slotTime: string): boolean {
 
     return false
 }
+export function isSlotSequenceAvailable(
+    startSlot: string, //primeiro slot disponivel  
+    requiredSlots: number, //quantidade de slots necessarios
+    allSlots: string[], //todos os horarios da clinica
+    blockedSlots: string[]){ //slots bloqueados
+        const startIndex = allSlots.indexOf(startSlot); 
+        if(startIndex === -1 || startIndex + requiredSlots > allSlots.length)
+            return false;
+        for(let i = startIndex; i < startIndex + requiredSlots; i++){
+            const slotTime = allSlots[i];
+            //se o horario estiver bloqueado
+            if(blockedSlots.includes(slotTime)){
+                return false;
+            }
+        }
+        return true;
+    }
