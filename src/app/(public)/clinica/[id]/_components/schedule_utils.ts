@@ -22,6 +22,15 @@ export function isSlotInThePast(slotTime: string): boolean {
 
     return false
 }
+/** 
+ * verificar se a partir de um slot inicial existe uma sequencia de "requiredSlots" disponiveis
+ * explo: se um servico tem duracao de 2 slots, verificar se os proximos 2 horarios estao disponiveis
+ * @param startSlot 
+ * @param requiredSlots 
+ * @param allSlots 
+ * @param blockedSlots 
+ * @returns 
+ */
 export function isSlotSequenceAvailable(
     startSlot: string, //primeiro slot disponivel  
     requiredSlots: number, //quantidade de slots necessarios
