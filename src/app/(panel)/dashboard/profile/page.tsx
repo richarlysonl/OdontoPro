@@ -1,5 +1,5 @@
 import  getSession  from "@/lib/getSession"
-import { getUserData } from "./_data-acess/get_info_user"
+import { getUserData } from "./_data-acess/get-info-user"
 import { ProfileContent } from "./_components/profile";
 import { redirect } from "next/navigation";
 

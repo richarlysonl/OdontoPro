@@ -1,6 +1,6 @@
 "use client"
 import {useState} from "react"
-import { ProfileFormData, useProfileForm } from "./profile_form"
+import { ProfileFormData, useProfileForm } from "./profile-form"
 import {
     Card,
     CardContent,
@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { Prisma } from "@/generated/prisma/client"
-import { updateProfile } from "../_actions/update_profile"
+import { updateProfile } from "../_actions/update-profile"
 import { toast } from 'sonner'
 import { formatPhone } from '@/utils/formatPhone'
 import { signOut, useSession } from "next-auth/react"

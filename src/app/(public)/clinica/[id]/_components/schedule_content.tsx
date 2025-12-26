@@ -14,7 +14,7 @@ import { DateTimePicker } from "./date_picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { time } from "console";
 import { ScheduleTimeList } from "./schedule_time_list";
-import { createNewAppointment } from "../_actions/create_appointment";
+import { createNewAppointment } from "../_actions/create-appointment";
 import { toast } from "sonner";
 // @ts-ignore
 type UserWithServiceAndSubscription = Prisma.UserGetPayload<{

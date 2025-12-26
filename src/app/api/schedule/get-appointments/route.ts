@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
                 status: 400
             });
         }
-        const appointments = await prisma.apointment.findMany({
+        const appointments = await prisma.appointment.findMany({
         where: {
             userId: userId,
             date: {

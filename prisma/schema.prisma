@@ -13,7 +13,7 @@ datasource db {
   provider = "postgresql"
 }
 
-model Apointment {
+model Appointment {
   id        String   @id @default(uuid())
   name      String
   email     String
@@ -29,7 +29,7 @@ model Apointment {
   updatedAt DateTime @updatedAt
 }
 
-model Remimber {
+model Reminder {
   id          String   @id @default(uuid())
   title       String
   description String?
@@ -47,7 +47,7 @@ model Service {
   duration    Int //em minutos
   userId      String
   user        User         @relation(fields: [userId], references: [id])
-  apointments Apointment[] //relação onde 1 pode ter varios agendamentos
+  appointments Appointment[] //relação onde 1 pode ter varios agendamentos
   status      Boolean      @default(true)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -78,8 +78,8 @@ model User {
 
   subscription      Subscription? //relação onde 1 pode ter 1 assinatura
   services            Service[] //relação onde 1 pode ter varios serviços
-  remimbers           Remimber[] //relação onde 1 pode ter varios lembretes
-  apointments         Apointment[] //relação onde 1 pode ter varios agendamentos
+  remimbers           Reminder[] //relação onde 1 pode ter varios lembretes
+  apointments         Appointment[] //relação onde 1 pode ter varios agendamentos
   address              String?         @default("")
   phone               String?         @default("")
   status              Boolean         @default(true)
