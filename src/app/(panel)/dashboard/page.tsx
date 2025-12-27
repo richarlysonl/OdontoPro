@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redirect} from "next/navigation";
 import { ButtonCopyLink } from "./_components/buton-copy-link";
 import { Reminders } from "./_components/reminder/reminders";
+
 export default async function dashboard() {
     const session = await getSession();
         console.log(session?.user?.name);
