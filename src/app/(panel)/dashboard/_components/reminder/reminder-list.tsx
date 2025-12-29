@@ -1,15 +1,29 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Card,CardContent,CardHeader,CardTitle } from "@/components/ui/card";
 import { Reminder } from "@prisma/client";
 import { Plus, Trash } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { deleteReminder } from "../../_actions/delete-reminders";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 interface ReminderListProps{
     reminder: Reminder[]
 }
 
 export function ReminderList({reminder}: ReminderListProps) 
 {
+    const router =  useRouter();
+    async function handleDeleteReminder(id: string) {
+        const response = await deleteReminder({reminderId: id});
+        if(response.error){
+            toast.error(response.error);
+            return;
+        }
+        toast.success(response.success);
+        router.refresh();
+    }
     console.log(reminder); 
     return (
     <div>
@@ -25,6 +39,8 @@ export function ReminderList({reminder}: ReminderListProps)
                     {reminder.length === 0 && (
                         <p className="text-sm text-gray-500">Nenhum lembrete encontrado.</p>
                     )}
+                    <ScrollArea 
+                    className="h-[340px] lg:max-h-[calc(100vh-15rem)] pr-0 w-full flex-1">
                     {reminder.map((Item) => (
                         <article 
                         key={Item.id}
@@ -32,11 +48,13 @@ export function ReminderList({reminder}: ReminderListProps)
                             <p className="text-sm lg:text-base">{Item.description}</p>
                             <Button
                             className="bg-red-500 hover:bg-red-400 shadow-none rounded-full p-2"
-                            size="sm">
+                            size="sm"
+                            onClick={() => {handleDeleteReminder(Item.id)}}>
                                 <Trash className="w-4 h-4 text-white"/>
                             </Button>
                         </article>
                     ))}
+                    </ScrollArea>
                 </CardContent>
             </Card>
         </div>
