@@ -1,2 +1,2 @@
-import {auth} from "./auth"
-export default auth;
+import { getSession } from "next-auth/react"
+export default getSession;

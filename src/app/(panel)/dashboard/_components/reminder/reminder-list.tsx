@@ -1,4 +1,5 @@
 'use client'
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card,CardContent,CardHeader,CardTitle } from "@/components/ui/card";
 import { Reminder } from "@prisma/client";
@@ -23,6 +24,7 @@ interface ReminderListProps{
 export function ReminderList({reminder}: ReminderListProps) 
 {
     const router =  useRouter();
+    const [isDialogOpen,setIsDialogOpen] = useState(false);
     async function handleDeleteReminder(id: string) {
         const response = await deleteReminder({reminderId: id});
         if(response.error){
@@ -39,12 +41,14 @@ export function ReminderList({reminder}: ReminderListProps)
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xl md:text-2xl font-bold">Lembretes</CardTitle>
-                <Dialog>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+
                 <DialogTrigger asChild>
                     <Button variant="ghost" className="rounded-full p-2">
                         <Plus className="w-5 h-5"/>
                     </Button>
                 </DialogTrigger>
+
                 <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Novo Lembrete</DialogTitle>
@@ -52,7 +56,11 @@ export function ReminderList({reminder}: ReminderListProps)
                         criar novo lembrete
                     </DialogDescription>
                 </DialogHeader>
+                <ReminderContent
+                    closeDialog={() => setIsDialogOpen(false)}
+                />
                 </DialogContent>
+
                 </Dialog>
                 </CardHeader>
                 <Button variant="ghost" className="w-full justify-start rounded-none border-t">

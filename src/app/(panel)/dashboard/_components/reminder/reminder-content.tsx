@@ -9,11 +9,26 @@ import { Form,
 import { ReminderFormData, useReminderForm } from "../reminder-form";
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button";
-export function ReminderContent() {
+import { createReminder } from "../../_actions/create-reminder";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+interface reminderContentProps{
+    closeDialog: () => void
+}
+export function ReminderContent({closeDialog}:reminderContentProps) {
     const form = useReminderForm();
+    const router = useRouter();
     async function onSubmit(formData:ReminderFormData) {
-        return;
+        const response = await createReminder({description: formData.description});
+        if(response.error){
+            toast.error(response.error);
+            return;
+        }
+        toast.success(response.data);
+        router.refresh();
+        closeDialog();
     }
+
     return (
         <div className="grip gap-4 py-4">
             <Form {...form}>
