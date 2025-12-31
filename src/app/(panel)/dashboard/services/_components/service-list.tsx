@@ -22,7 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Ghost, Pencil, Plus, X } from "lucide-react";
 import { DialogService } from "./dialog-service"
-import { Service } from "@/generated/prisma";
+import { Service } from "@prisma/client";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { deleteService } from "../_actions/delete-service";
 import { toast } from "sonner";
@@ -50,7 +50,13 @@ export function ServiceList({services}:ServiceListProps) {
     }
 
     return (
-        <Dialog open={dialogIsOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog 
+        open={dialogIsOpen} 
+        onOpenChange={(open)=>{
+            setIsDialogOpen(open);
+            if(!open)
+                setEditingService(null);
+        }}>
         <section className="mx-auto">
             <Card>
                 <CardHeader className="flex flex-row justify-between items-center space-y-0 pb-2">

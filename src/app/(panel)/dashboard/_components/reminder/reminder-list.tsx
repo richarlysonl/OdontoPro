@@ -64,7 +64,6 @@ export function ReminderList({reminder}: ReminderListProps)
                 </Dialog>
                 </CardHeader>
                 <Button variant="ghost" className="w-full justify-start rounded-none border-t">
-                    <Plus className="w-5 h-5 mr-2"/>
                 </Button>
                 <CardContent>
                     {reminder.length === 0 && (

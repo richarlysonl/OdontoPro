@@ -1,12 +1,12 @@
 import React from "react";
 import { Sidebar } from "../../(panel)/dashboard/_components/sidebar";
-import  getSession  from "@/lib/getSession";
+import { auth } from "@/lib/auth";
 import { redirect} from "next/navigation";
 export default async function DasboardLayout({
     children,
 }:{children:React.ReactNode})
 {
-    const session = await getSession();
+    const session = await auth();
             //console.log(session?.user?.name);
             if(!session)
                 redirect("/");

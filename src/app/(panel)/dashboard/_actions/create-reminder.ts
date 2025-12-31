@@ -32,8 +32,9 @@ export async function createReminder(formData:FormSchema){
             data:"lembrete cadastrado com sucesso"
         }
     }catch(err){
+        console.log(err);
         return {
-            error: "falha ao cadastrar lembrete"
+            error: "falha ao cadastrar lembretess"
         }
     }
 }

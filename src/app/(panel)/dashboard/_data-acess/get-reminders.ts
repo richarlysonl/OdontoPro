@@ -7,7 +7,7 @@ export async function getReminders({userId}:{userId:string}) {
         return [];
     }
     try{
-        const reminders = await prisma.remimber.findMany({
+        const reminders = await prisma.reminder.findMany({
             where: {
                 userId: userId
             },
