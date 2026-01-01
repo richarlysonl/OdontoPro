@@ -5,7 +5,7 @@ import Link from "next/link";
 import { redirect} from "next/navigation";
 import { ButtonCopyLink } from "./_components/buton-copy-link";
 import { Reminders } from "./_components/reminder/reminders";
-
+import { Appointments } from "./_components/appointments/appointments";
 export default async function dashboard() {
     const session = await auth();
         console.log(session?.user?.name);
@@ -26,7 +26,7 @@ export default async function dashboard() {
             </div>
         
         <section className="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-4">
-            <div>agendas</div>
+            <Appointments userId={session.user?.id!}/>
             <Reminders userId={session.user?.id!}/>
         </section>
         </main>

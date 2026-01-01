@@ -1,10 +1,10 @@
-import  getSession  from "@/lib/getSession"
 import { getUserData } from "./_data-acess/get-info-user"
 import { ProfileContent } from "./_components/profile";
 import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 
 export default async function Profile() {
-    const session = await getSession()
+    const session = await auth()
     if (!session) {
         redirect("/")
     }
