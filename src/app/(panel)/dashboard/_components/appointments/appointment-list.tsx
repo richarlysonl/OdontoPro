@@ -8,14 +8,33 @@ import {
     CardTitle,
     CardDescription
 } from "@/components/ui/card"
-
-
+import { useQuery } from "@tanstack/react-query"
+import { format } from 'date-fns'
+import { features } from "process"
 interface AppointmentsListProps{
     times:string[]
 }
 export function AppointmentsList({times}:AppointmentsListProps){
     const searchParams = useSearchParams();
     const date = searchParams.get("date");
+    const { data, isLoading } = useQuery({
+        queryKey: ["get-appointments",date],
+        queryFn: async () => {
+            //aqui vamos buscar da nossa rota
+            let activeDate = date;
+            if(!activeDate){
+                const today = format(new Date(), "yyyy-MM-dd");
+                activeDate = today;
+            }
+             const url =`${process.env.NEXT_PUBLIC_URL}/api/clinic/appointments?date=${activeDate}`   
+            const response = await fetch(url);
+            const json = await response.json();
+            console.log(json);
+            if(!response.ok)
+                return []
+            return json;
+        }
+    });
     return(
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

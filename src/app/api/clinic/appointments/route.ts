@@ -1,9 +1,6 @@
-import { Appointments } from "@/app/(panel)/dashboard/_components/appointments/appointments";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { useSearchParams } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
-import { date } from "zod";
 /*
     rota para buscar os agedamentos da clinica
     => data
