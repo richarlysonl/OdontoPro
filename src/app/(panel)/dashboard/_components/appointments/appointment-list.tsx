@@ -39,22 +39,19 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
 
             return json.appointments as AppointmentsWithService[];
         },
+        staleTime: 20000, //20 segundos
+        refetchInterval: 60000 //60 segundos
     })
 
     //montar occupantMap slot > appointment
     //se o appointment comeca [13:00] e tem 2 requiredSlot 2
     //occupantMap ["13:00",appointment] ["13:30",appointment]
     const occupantMap: Record<string, AppointmentsWithService> = {}
-    console.log("data:", data);
-    console.log("Array?", Array.isArray(data));
-    console.log("keys:", Object.keys(data));
     if (data && data.length > 0) {
-        console.log("hala madrid")
         for (const appointment of data) {
             const requiredSlot = Math.ceil(appointment.service.duration / 30);
             //descobrir o index do array de horarios
             const startIndex = times.indexOf(appointment.time)
-            console.log("tempo ", startIndex)
             //se encontrou o index
             if (startIndex !== -1) {
                 console.log("hy")
@@ -63,7 +60,6 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
                     if (slotIndex < times.length) {
                         //ocupantMap recebe o index
                         occupantMap[times[slotIndex]] = appointment;
-                        console.log("ta chengando")
                     }
                 }
             }
