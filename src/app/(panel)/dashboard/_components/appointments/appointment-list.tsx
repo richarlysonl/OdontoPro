@@ -8,10 +8,14 @@ import {
     CardTitle,
     CardDescription
 } from "@/components/ui/card"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { format } from 'date-fns'
 import { features } from "process"
 import { Prisma } from "@prisma/client"
+import { Button } from "@/components/ui/button"
+import { Eye, X } from "lucide-react"
+import { cancelAppointment } from "../../_actions/cancel-appointment"
+import { toast } from "sonner"
 interface AppointmentsListProps {
     times: string[]
 }
@@ -23,7 +27,8 @@ type AppointmentsWithService = Prisma.AppointmentGetPayload<{
 export function AppointmentsList({ times }: AppointmentsListProps) {
     const searchParams = useSearchParams();
     const date = searchParams.get("date");
-    const { data = [], isLoading } = useQuery<AppointmentsWithService[]>({
+    const QueryClient = useQueryClient();
+    const { data = [], isLoading, refetch } = useQuery<AppointmentsWithService[]>({
         queryKey: ["get-appointments", date],
         queryFn: async () => {
             let activeDate = date;
@@ -65,6 +70,17 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
             }
         }
     }
+    async function handleCancelAppointment(appointmentId:string) {
+        const response = await cancelAppointment({ AppointmentId: appointmentId})
+        if(response.error){
+            toast.error(response.error);
+            return;
+        }
+        QueryClient.invalidateQueries({queryKey: ["get-appointments"]})
+        await refetch();
+        toast.success(response.data)
+        
+    }
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -72,7 +88,7 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
                 <button>selecionar data</button>
             </CardHeader>
             <CardContent>
-                <ScrollArea className="h-[calc(100vh-20rem)] lg:h-[calc(100vh-15rem)] pr-4">
+                <ScrollArea className="h-[[calc(100vh-20rem)]] lg:h-[calc(100vh-15rem)] pr-4">
                     {isLoading ? (
                         <p>carregando agenda</p>
                     ) : (
@@ -89,10 +105,27 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
                                         <div className="w-16 text-sm font-semibold px-5">
                                             {slot}
                                         </div>
-                                        <div className="flex-1 text-sm">
-                                            <div className="flex">
-                                                <div className="font-semibold">{occupant.name}</div>
-                                                <div className="text-sm text-gray-500">{occupant.phone}</div>
+                                        <div className="flex-1 text-sm ">
+                                            <div className="font-semibold">{occupant.name}</div>
+                                            <div className="text-sm text-gray-500">{occupant.service.name}</div>
+                                        </div>
+                                        <div className="flex ml-auto gap-1">
+                                            <div>
+                                                <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                >
+                                                    <Eye className="h-4 y-4"/>
+                                                </Button>
+                                            </div>
+                                            <div>
+                                                <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={()=>{ handleCancelAppointment(occupant.id)}}
+                                                >
+                                                    <X className="h-4 y-4"/>
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>
