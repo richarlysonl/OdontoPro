@@ -16,10 +16,13 @@ import { Button } from "@/components/ui/button"
 import { Eye, X } from "lucide-react"
 import { cancelAppointment } from "../../_actions/cancel-appointment"
 import { toast } from "sonner"
+import { Dialog,DialogTrigger } from "@/components/ui/dialog"
+import { useState } from "react"
+import { DialogAppointment } from "./dialog-appointment"
 interface AppointmentsListProps {
     times: string[]
 }
-type AppointmentsWithService = Prisma.AppointmentGetPayload<{
+export type AppointmentsWithService = Prisma.AppointmentGetPayload<{
     include: {
         service: true
     }
@@ -28,6 +31,8 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
     const searchParams = useSearchParams();
     const date = searchParams.get("date");
     const QueryClient = useQueryClient();
+    const [isDialogOpen,setIsDialogOpen] = useState(false);
+    const [detailAppointment,setDetailAppointment] = useState<AppointmentsWithService | null>(null);
     const { data = [], isLoading, refetch } = useQuery<AppointmentsWithService[]>({
         queryKey: ["get-appointments", date],
         queryFn: async () => {
@@ -59,7 +64,6 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
             const startIndex = times.indexOf(appointment.time)
             //se encontrou o index
             if (startIndex !== -1) {
-                console.log("hy")
                 for (let i = 0; i < requiredSlot; i++) {
                     const slotIndex = startIndex + i;
                     if (slotIndex < times.length) {
@@ -82,6 +86,7 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
         
     }
     return (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xl md:text-2xl font-bold">Agendamentos</CardTitle>
@@ -96,7 +101,6 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
                             //occpupantMap
                             const occupant = occupantMap[slot];
                             if (occupant) {
-                                console.log("hy mister");
                                 return (
                                     <div
                                         key={slot}
@@ -111,12 +115,15 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
                                         </div>
                                         <div className="flex ml-auto gap-1">
                                             <div>
+                                                <DialogTrigger asChild>
                                                 <Button
                                                 variant="ghost"
                                                 size="icon"
+                                                onClick={() => setDetailAppointment(occupant)}
                                                 >
                                                     <Eye className="h-4 y-4"/>
                                                 </Button>
+                                                </DialogTrigger>
                                             </div>
                                             <div>
                                                 <Button
@@ -149,5 +156,7 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
                 </ScrollArea>
             </CardContent>
         </Card>
+                    <DialogAppointment appointment={detailAppointment}/>
+        </Dialog>
     )
 }

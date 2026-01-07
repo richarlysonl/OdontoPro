@@ -34,7 +34,6 @@ export function ReminderList({reminder}: ReminderListProps)
         toast.success(response.success);
         router.refresh();
     }
-    console.log(reminder); 
     return (
     <div>
         <div className="flex flex-col gap-3">
