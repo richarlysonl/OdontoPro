@@ -19,6 +19,7 @@ import { toast } from "sonner"
 import { Dialog,DialogTrigger } from "@/components/ui/dialog"
 import { useState } from "react"
 import { DialogAppointment } from "./dialog-appointment"
+import { ButtonPickerAppoitment } from "./button-date"
 interface AppointmentsListProps {
     times: string[]
 }
@@ -90,7 +91,7 @@ export function AppointmentsList({ times }: AppointmentsListProps) {
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xl md:text-2xl font-bold">Agendamentos</CardTitle>
-                <button>selecionar data</button>
+                <ButtonPickerAppoitment></ButtonPickerAppoitment>
             </CardHeader>
             <CardContent>
                 <ScrollArea className="h-[[calc(100vh-20rem)]] lg:h-[calc(100vh-15rem)] pr-4">
