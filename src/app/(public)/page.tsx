@@ -1,15 +1,17 @@
-import { Clinics } from "./_components/clinics";
+import { Professionals } from "./_components/professionals";
 import { Footer } from "./_components/footer";
 import { Header }from "./_components/header";
 import { Hero } from "./_components/hero";
+import { getProfessionals } from "./_data-acess/get-professionals";
 //quando é export function, tem que importar com chaves {}, sé for export default, importa sem chaves
-export default function Home() {
+export default async function Home() {
+  const professionals = await getProfessionals();
   return (
     <div className="flex flex-col min-h-screen">
     <Header />
       <div>
       <Hero />
-      <Clinics />
+      <Professionals professionals={professionals}/>
       <Footer />
       </div>
     </div>

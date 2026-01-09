@@ -25,7 +25,12 @@ export function DialogAppointment({ appointment }:DialogAppointmentProps){
             {appointment &&(
                 <article>
                     <p><span className="font-semibold">horario agendado:</span>{appointment.time}</p>
-                    <p className="mb-2"><span className="font-semibold">data do agendamento:</span>{format(appointment.date,"dd/MM/yyyy")}</p>
+                    <p className="mb-2"><span className="font-semibold">data do agendamento:</span>{new Intl.DateTimeFormat('pt-BR',{
+                        timeZone: "UTC",
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                    }).format(new Date(appointment.date))}</p>
                     <p><span className="font-semibold">nome:</span>{appointment.name}</p>
                     <p><span className="font-semibold">telefone:</span>{appointment.phone}</p>
                     <p><span className="font-semibold">email:</span>{appointment.email}</p>

@@ -17,8 +17,8 @@ export async function GET(request: NextRequest) {
     try {
         //converter data em um objeto date
         const [year, month, day] = dateParm.split('-').map(Number);
-        const startDate = new Date(year, month - 1, day, 0, 0, 0);
-        const endtDate = new Date(year, month - 1, day, 23, 59, 59, 999);
+        const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+        const endtDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
         const user = await prisma.user.findFirst({
             where: {
                 id: userId
