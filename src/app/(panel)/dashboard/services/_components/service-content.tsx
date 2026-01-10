@@ -6,7 +6,6 @@ interface ServiceContentProps{
 }
 
 export async function ServiceContent({userId }:ServiceContentProps) {
-    console.log("User ID in ServiceContent:", userId);
     const services = await getAllServices(userId);
     return (
         <div>
