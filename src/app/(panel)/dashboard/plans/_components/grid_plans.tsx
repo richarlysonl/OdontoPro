@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -8,6 +7,7 @@ import {
     CardTitle
 } from "@/components/ui/card";
 import { subscriptionPlans } from "@/utils/plans/index";
+import { SubscriptionButton } from "./subscription-button";
 export function GridPlans() {
     return (
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
@@ -42,9 +42,11 @@ export function GridPlans() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button className="bg-black w-full">
-                            ativar assinatura
-                        </Button>
+                        <SubscriptionButton
+                        type={
+                            plan.id === "basic" ? "basic" : "professional"
+                            }
+                        />
                     </CardFooter>
                 </Card>
             ))}
