@@ -50,8 +50,8 @@ model Service {
 }
 
 enum plan {
-  basic
-  professional
+  BASIC
+  PROFESSIONAL
 }
 
 model Subscription {
@@ -80,7 +80,7 @@ model User {
   phone               String?         @default("")
   status              Boolean         @default(true)
   timezone            String?         @default("UTC")
-  striper_customer_id String?         @default("")
+  stripe_customer_id String?         @default("")
   times               String[]        @default([])
   accounts            Account[]
   sessions            Session[]

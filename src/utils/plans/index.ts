@@ -15,8 +15,8 @@ export const PLANS: PlanProps = {
 }
 export const subscriptionPlans = [
     {
-        id:"basic",
-        name:"basic",
+        id:"BASIC",
+        name:"BASIC",
         description: "perfeito para clinicas menores",
         oldPrice: "R$ 97,90",
         price:"R$ 27,90",
@@ -28,8 +28,8 @@ export const subscriptionPlans = [
         ]
     },
     {
-        id:"professional",
-        name:"professional",
+        id:"PROFESSIONAL",
+        name:"PROFESSIONAL",
         description: "perfeito para clinicas grandes",
         oldPrice: "R$ 197,90",
         price:"R$ 97,90",

@@ -44,7 +44,7 @@ export function GridPlans() {
                     <CardFooter>
                         <SubscriptionButton
                         type={
-                            plan.id === "basic" ? "basic" : "professional"
+                            plan.id === "BASIC" ? "BASIC" : "PROFESSIONAL"
                             }
                         />
                     </CardFooter>
