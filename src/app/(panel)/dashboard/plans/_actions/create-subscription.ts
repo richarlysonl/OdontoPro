@@ -1,75 +1,65 @@
-"use server"
-
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { stripe } from "@/utils/stripe"
 import { plan } from "@prisma/client"
 
-interface SubstriptionProps{
-    type:plan
+interface SubscriptionProps {
+  type: plan
 }
-export async function createSubscription({type}: SubstriptionProps) {
-    const session = await auth();
-    const userId = session?.user?.id;
-    if(!userId)
-        return {
-            sessionId: "",
-            error: "falha ao ativar plano"
-        }
-        const findUser = await prisma.user.findFirst({
-            where:{ 
-                id:userId
-            }
-        
-        })
-        if(!findUser){
-            return{
-                sessionId:"",
-                error: "erro ao ativar plano"
-            }
-        }
-        let customerId = findUser.stripe_customer_id;
-        if(!customerId){
-            //caso o user não tem um registro stripe_customer_id então criamos ele como cliente
-            const stripeCustomer = await stripe.customers.create({
-                email: findUser.email
-            })
-            await prisma.user.update({
-                where: {
-                    id:userId
-                },
-                data:{
-                    stripe_customer_id: stripeCustomer.id
-                }
-            })
-            customerId = stripeCustomer.id
-        }
-        //criar o CHECKOUT
-        try{
-            const stripeCheckoutSession = await stripe.checkout.sessions.create({
-                customer:customerId,
-                payment_method_types: ["card"],
-                billing_address_collection: "required",
-                line_items: [{
-                    price: type === 'BASIC' ? process.env.STRIPE_PLAN_BASIC : process.env.STRIPE_PLAN_PROFESSIONAL,
-                    quantity: 1,
-                }],
-                metadata: {
-                    type: type
-                },
-                mode: "subscription",
-                allow_promotion_codes: true,
-                success_url: process.env.STRIPE_SUCCESS_URL,
-                cancel_url: process.env.STRIPE_CANCEL_URL,
-            })
-            return{
-                sessionId: stripeCheckoutSession.id,
-                url: stripeCheckoutSession.url
-            }
-        }catch(err){
-            return{
-            sessionId: "",
-            error:"erro generico"
-        }
-        }
+
+export async function createSubscription({ type }: SubscriptionProps) {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return { sessionId: "", error: "Usuário não autenticado" }
+  }
+
+  const findUser = await prisma.user.findUnique({
+    where: { id: userId },
+  })
+
+  if (!findUser) {
+    return { sessionId: "", error: "Usuário não encontrado" }
+  }
+
+  let customerId = findUser.stripe_customer_id
+
+  if (!customerId) {
+    const stripeCustomer = await stripe.customers.create({
+      email: findUser.email,
+    })
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { stripe_customer_id: stripeCustomer.id },
+    })
+
+    customerId = stripeCustomer.id
+  }
+
+  const priceId =
+    type === plan.BASIC
+      ? process.env.STRIPE_PLAN_BASIC
+      : process.env.STRIPE_PLAN_PROFESSIONAL
+
+  if (!priceId) {
+    return { sessionId: "", error: "Plano não configurado" }
+  }
+
+  const checkoutSession = await stripe.checkout.sessions.create({
+    customer: customerId,
+    mode: "subscription",
+    billing_address_collection: "required",
+    allow_promotion_codes: true,
+    line_items: [{ price: priceId, quantity: 1 }],
+    success_url: process.env.STRIPE_SUCCESS_URL!,
+    cancel_url: process.env.STRIPE_CANCEL_URL!,
+    metadata: { plan: type },
+  })
+
+  return {
+    sessionId: checkoutSession.id,
+    url: checkoutSession.url!,
+  }
 }
