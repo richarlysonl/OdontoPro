@@ -35,7 +35,9 @@ export const POST = async (request: Request) => {
             break;
         case "checkout.session.completed":
             const checkoutSession = event.data.object as Stripe.Checkout.Session
-            const type = checkoutSession.metadata?.type ? checkoutSession.metadata?.type : "BASIC";
+            const type = checkoutSession.metadata?.plan ? checkoutSession.metadata?.plan : "BASIC";
+            console.log("checkoutSession ", checkoutSession.metadata?.plan)
+            console.log("type ", type)
             if(checkoutSession.subscription && checkoutSession.customer){
                 await manageSubscription(
                     checkoutSession.subscription.toString(), 
