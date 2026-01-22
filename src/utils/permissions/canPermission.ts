@@ -3,17 +3,18 @@
 import { auth } from "@/lib/auth"
 import { PlanDetaisInfo } from "./get-plans";
 import prisma from "@/lib/prisma";
+import { canCreateService } from "./canCreateService";
 
 //perguntar se tem permissao para fazer algo
 export type PLAN_PROP = "BASIC" | "PROFESSIONAL" | "EXPIRED" | "TRIAL";
 interface CanPermissionProps{
     type: string
 }
-interface ResultPermissionProps{
+export interface ResultPermissionProps{
     hasPermission: Boolean;
-            planId: PLAN_PROP;
-            expired: Boolean;
-            plan: PlanDetaisInfo | null;
+    planId: PLAN_PROP;
+    expired: Boolean;
+    plan: PlanDetaisInfo | null;
 }
 export async function canPermission({type} : CanPermissionProps): Promise<ResultPermissionProps>{
     const session = await auth();
@@ -32,8 +33,8 @@ export async function canPermission({type} : CanPermissionProps): Promise<Result
     })
     switch(type){
         case "service":
-            //verificar se o usuario tem permissao para criar um servico com base no plano
-            
+            const permission = await canCreateService(subscription, session);
+            return permission;
         default: 
         return {
             hasPermission: false,
