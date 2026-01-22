@@ -7,8 +7,9 @@ import { canCreateService } from "./canCreateService";
 
 //perguntar se tem permissao para fazer algo
 export type PLAN_PROP = "BASIC" | "PROFESSIONAL" | "EXPIRED" | "TRIAL";
+type TypeCheck = "service";
 interface CanPermissionProps{
-    type: string
+    type: TypeCheck;
 }
 export interface ResultPermissionProps{
     hasPermission: Boolean;
