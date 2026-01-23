@@ -12,9 +12,9 @@ interface CanPermissionProps{
     type: TypeCheck;
 }
 export interface ResultPermissionProps{
-    hasPermission: Boolean;
+    hasPermission: boolean;
     planId: PLAN_PROP;
-    expired: Boolean;
+    expired: boolean;
     plan: PlanDetaisInfo | null;
 }
 export async function canPermission({type} : CanPermissionProps): Promise<ResultPermissionProps>{
@@ -29,7 +29,7 @@ export async function canPermission({type} : CanPermissionProps): Promise<Result
     }
     const subscription = await prisma.subscription.findFirst({
         where: {
-            id: session.user.id
+            userId: session.user.id
         }
     })
     switch(type){
