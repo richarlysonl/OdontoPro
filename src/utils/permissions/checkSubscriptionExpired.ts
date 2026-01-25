@@ -3,11 +3,11 @@
 import { Session } from "next-auth";
 import {addDays, isAfter} from "date-fns";
 import { ResultPermissionProps } from "./canPermission";
-const TRAIL_DAYS = 3;
+import { TRIAL_DAYS } from "./trial-limits";
 
 export async function checkSubscriptionExpired(session: Session): Promise<ResultPermissionProps> {
-    const trailEndDate = addDays(session?.user?.createdAt!, TRAIL_DAYS); 
-    if(isAfter(new Date(), trailEndDate)){
+    const trialEndDate = addDays(session?.user?.createdAt!, TRIAL_DAYS); 
+    if(isAfter(new Date(), trialEndDate)){
         return {
             hasPermission: false,
             planId: "EXPIRED",
