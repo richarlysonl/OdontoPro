@@ -8,7 +8,6 @@ export default async function Reports() {
     if (!session)
         redirect("/");
     const user = await getPermissionUserToReports({ userId: session.user.id });
-    console.log("usuario junior",user);
     if (!user) {
         return(
         <main>
