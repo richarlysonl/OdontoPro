@@ -11,7 +11,6 @@ import { LabelSubscription } from "@/components/ui/label-subscription";
 
 export default async function dashboard() {
     const session = await auth();
-        console.log(session?.user?.name);
         if(!session)
             redirect("/");
         const subscriptionStatus = await checkSubscription(session?.user?.id!);

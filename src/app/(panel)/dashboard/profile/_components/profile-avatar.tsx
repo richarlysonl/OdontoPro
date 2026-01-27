@@ -1,9 +1,11 @@
 "use client"
 import Image from "next/image";
-import {semFoto} from "../../../../../../public/foto1.png"
+import semFoto from "../../../../../../public/foto1.png"
 import { ChangeEvent, useState } from "react";
 import { Loader, Upload } from "lucide-react";
 import { toast } from "sonner";
+import { updateProfileAvatar } from "../_actions/update-avatar";
+import { useSession } from "next-auth/react";
 interface ProfileAvatarProps {
   avatarUrl: string | null;
   userId: string;
@@ -11,6 +13,7 @@ interface ProfileAvatarProps {
 export function ProfileAvatar({ avatarUrl,userId }:ProfileAvatarProps) {
     const [previewImage, setPreviewImage] = useState(avatarUrl);
     const [loading, setLoading] = useState(false);
+    const {update} = useSession();
     async function handleChange(event: ChangeEvent<HTMLInputElement>) {
         if(event.target.files && event.target.files[0]){
             setLoading(true);
@@ -22,6 +25,16 @@ export function ProfileAvatar({ avatarUrl,userId }:ProfileAvatarProps) {
             const newFileName = `${userId}`;
             const newFile = new File([image],newFileName,{type: image.type});
             const urlImage = await uploadImage(newFile);
+            if(!urlImage || urlImage === ""){
+                toast.error("Erro ao enviar a imagem.");
+                return;
+            }
+            setPreviewImage(urlImage);
+            await updateProfileAvatar({avatarUrl: urlImage});
+            await update({
+                image: urlImage
+            });
+            setLoading(false);
         }
     }
     async function uploadImage(image:File): Promise<string | null>{
@@ -38,7 +51,7 @@ export function ProfileAvatar({ avatarUrl,userId }:ProfileAvatarProps) {
                 return null;
             }
             toast.success("Imagem enviada com sucesso!");
-            return data as string;
+            return data.secure_url as string;
         }catch(err){
             return null;
         }

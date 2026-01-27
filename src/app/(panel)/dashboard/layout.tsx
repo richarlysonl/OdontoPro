@@ -7,7 +7,6 @@ export default async function DasboardLayout({
 }:{children:React.ReactNode})
 {
     const session = await auth();
-            //console.log(session?.user?.name);
             if(!session)
                 redirect("/");
     return(
