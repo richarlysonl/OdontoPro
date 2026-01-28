@@ -10,11 +10,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import { Ghost, LogIn, Menu } from "lucide-react";
+import {LogIn, Menu } from "lucide-react";
 import {useSession} from "next-auth/react";
 import { HandleRegister } from "../_actions/login";
    async function Handlelogin() {
-    await HandleRegister("github")
+    await HandleRegister("google")
+
    }
 export function Header() {
   const { data: session,status} = useSession();

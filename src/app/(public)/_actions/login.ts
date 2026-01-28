@@ -1,5 +1,6 @@
 "use server"
 import { signIn } from "@/lib/auth";
-export async function HandleRegister(provider: string) {
+type Provider = "github" | "google";
+export async function HandleRegister(provider: Provider) {
     await signIn(provider, {redirectTo: "/dashboard"})
 }
