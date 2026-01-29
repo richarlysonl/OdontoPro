@@ -39,7 +39,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import { Prisma } from "@/generated/prisma/client"
+import { Prisma } from "@prisma/client"
 import { updateProfile } from "../_actions/update-profile"
 import { toast } from 'sonner'
 import { formatPhone } from '@/utils/formatPhone'

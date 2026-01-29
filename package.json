@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && npx prisma migrate deploy && next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhook"
   },
   "dependencies": {
@@ -42,6 +43,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@prisma/config": "^7.3.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.27",
     "@types/pg": "^8.16.0",
